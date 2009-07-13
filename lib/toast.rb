@@ -165,8 +165,7 @@ module Toast
                 db.execute("select * from breads where id = :id", ":id" => butter_row["bread_id"]) do |twitter|
                   httpauth = Twitter::HTTPAuth.new(twitter["twitter_username"], twitter["twitter_password"])
                   base = Twitter::Base.new(httpauth)
-                  puts "tiwtter spam"
-                  #base.update(twitter["twitter_message"])
+                  base.update(twitter["twitter_message"])
                   db.execute("update toasters set last_check = :last_check and complete = :outcome where id = :id",
                           "last_check" => Time.now, "id" => row["id"], "outcome" => true)
                 end
@@ -177,14 +176,10 @@ module Toast
               end
             end
           end
-        else
-          puts "should NOT run"
         end
       end
-
     end
 
   end
-
   
 end
