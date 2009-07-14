@@ -63,14 +63,14 @@ module Toast
     end
 
     def toast!
-      File.delete("toast.db")
+      #File.delete("toast.db")
       db = SQLite3::Database.new("toast.db")
       db.execute("CREATE TABLE IF NOT EXISTS toasters (
                     id integer PRIMARY KEY,
                     frequency integer,
                     last_check datetime,
                     conditions varchar2(32),
-                    complete boolean
+                    complete integer
                 );")
       db.execute("CREATE TABLE IF NOT EXISTS breads (
                     id integer PRIMARY KEY,
@@ -143,7 +143,7 @@ module Toast
           ",
             "frequency" => self.timer,
             "conditions" => butters.join(","),
-            "complete" => false,
+            "complete" => 0,
             "last_check" => Time.now
           );
         
@@ -155,7 +155,7 @@ module Toast
       db = SQLite3::Database.new("toast.db")
 
       db.results_as_hash = true
-      db.execute("select * from toasters where complete = 'false'") do |row|
+      db.execute("select * from toasters where complete = 0") do |row|
         if ((Time.parse(row["last_check"]) + row["frequency"].to_i) < Time.now)
           row["conditions"].split(",")
           row["conditions"].each do |condition|
@@ -166,13 +166,12 @@ module Toast
                   httpauth = Twitter::HTTPAuth.new(twitter["twitter_username"], twitter["twitter_password"])
                   base = Twitter::Base.new(httpauth)
                   base.update(twitter["twitter_message"])
-                  db.execute("update toasters set last_check = :last_check and complete = :outcome where id = :id",
-                          "last_check" => Time.now, "id" => row["id"], "outcome" => true)
+                  db.execute("update toasters set complete = \"1\" where id = :id;", "id" => row["id"])
                 end
               else
                 # Did'nt pass the condition, so update the time
-                db.execute("update toasters set last_check = :last_check where id = :id",
-                          "last_check" => Time.now, "id" => row["id"])
+                db.execute("update toasters set last_check = :lastcheck where id = :id",
+                          "lastcheck" => Time.now, "id" => row["id"])
               end
             end
           end
