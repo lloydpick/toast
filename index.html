@@ -1,1 +1,59 @@
-My GitHub Page
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Toast RubyGem</title>
+
+        <!-- META -->
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="language" content="en" />
+
+        <!-- CSS -->
+        <link href="css/main.css" media="screen" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div id="main">
+            <div id="logo"></div>
+            <div id="content">
+                <h1>Toast RubyGem</h1>
+                <h2>Post pre-written updates to Twitter automatically based upon multiple custom conditional events</h2>
+
+                <h3>Introduction</h3>
+                <p>Basically this gem will allow you to write conditions, then once those conditions are met automatically post a message to a Twitter feed with the message you pre-write.</p>
+                <p>A simple example; you could say that once the date becomes the 15th of July 2009, post a message saying "Happy 24th Birthday!" to someone. Since the conditions are written by you in Ruby you can check for whatever you please. You could even go as far to use it for a systems alert, hard drives becoming full, CPU maxed out etc.</p>
+
+                <h3>Installation</h3>
+                <p>Is simple as running the following commands...</p>
+                <pre class="ruby"><span class="normal">gem sources -a http://gems.github.com<br />sudo gem install lloydpick-toast</span></pre>
+
+                <h3>Setup</h3>
+                <p>The RubyGem can only support one time messages currently, although there's nothing stopping you writing something to auto generate the processes required. To start with we will do a simple example to check if a file exists on a website.</p>
+                <pre class="ruby"><span class="comment"># So let's start with getting the gems loaded</span><br /><span class="ident">require</span> <span class="punct">'</span><span class="string">rubygems</span><span class="punct">'</span><br /><span class="ident">require</span> <span class="punct">'</span><span class="string">toast</span><span class="punct">'</span></pre>
+                <p>With that done let's start by telling Toast what our Twitter account details are...</p>
+                <pre class="ruby"><span class="ident">twitter_account</span> <span class="punct">=</span> <span class="constant">Toast</span><span class="punct">::</span><span class="constant">TwitterAccount</span><span class="punct">.</span><span class="ident">new</span><span class="punct">(&quot;</span><span class="string">mylogin</span><span class="punct">&quot;,</span> <span class="punct">&quot;</span><span class="string">mypassword</span><span class="punct">&quot;)</span></pre>
+                <p>Now we need to create the bread that we will eventually toast. Peices of bread are basically your messages to twitter, so let's get one setup. Let's give it a name incase we need to debug whats going on and we'll enter the message we want displayed once our conditions have been met. We'll also associate this bread with our twitter account details.</p>
+                <pre class="ruby"><span class="ident">bread</span> <span class="punct">=</span> <span class="constant">Toast</span><span class="punct">::</span><span class="constant">Bread</span><span class="punct">.</span><span class="ident">new</span><br /><span class="ident">bread</span><span class="punct">.</span><span class="ident">name</span> <span class="punct">=</span> <span class="punct">&quot;</span><span class="string">My first piece of bread</span><span class="punct">&quot;</span><br /><span class="ident">bread</span><span class="punct">.</span><span class="ident">twitter_message</span> <span class="punct">=</span> <span class="punct">&quot;</span><span class="string">Ohh, I've just noticed that Toast has released a new version!</span><span class="punct">&quot;</span><br /><span class="ident">bread</span><span class="punct">.</span><span class="ident">twitter_account</span> <span class="punct">=</span> <span class="ident">twitter_account</span></pre>
+                <p>Next comes the butter or toppings that you put on your bread. These are your conditionals, and once these have been forfilled will cause the bread to pop out the toaster. So again, let's give it a name for debugging, define what the output of the conditional must be in order to pass, the function that gets called for checking conditions, and finally associate these conditions with the bread.</p>
+                <pre class="ruby"><span class="ident">butter</span> <span class="punct">=</span> <span class="constant">Toast</span><span class="punct">::</span><span class="constant">Bread</span><span class="punct">::</span><span class="constant">Butter</span><span class="punct">.</span><span class="ident">new</span><br /><span class="ident">butter</span><span class="punct">.</span><span class="ident">name</span> <span class="punct">=</span> <span class="punct">&quot;</span><span class="string">Checks for new version</span><span class="punct">&quot;</span><br /><span class="ident">butter</span><span class="punct">.</span><span class="ident">post_condition</span> <span class="punct">=</span> <span class="punct">&quot;</span><span class="string">0.0.4</span><span class="punct">&quot;</span><br /><span class="ident">butter</span><span class="punct">.</span><span class="ident">function</span> <span class="punct">=</span> <span class="punct">'</span><span class="string">checkToastSite()</span><span class="punct">'</span><br /><span class="ident">bread</span><span class="punct">.</span><span class="ident">butters</span> <span class="punct">&lt;&lt;</span> <span class="ident">butter</span></pre>
+                <p>Lastly comes the all important toaster builder. Toasters are the runners, and this generator will build up the SQLite DB required to test your conditions. So, you put all your bits of bread in the toaster, then set the frequency of how often you want to check the conditions (shouldnt be less than 60 since its going to be run with a cron job)</p>
+                <pre class="ruby"><span class="ident">toaster</span> <span class="punct">=</span> <span class="constant">Toast</span><span class="punct">::</span><span class="constant">Toaster</span><span class="punct">.</span><span class="ident">new</span><br /><span class="ident">toaster</span><span class="punct">.</span><span class="ident">bread</span> <span class="punct">&lt;&lt;</span> <span class="ident">bread</span><br /><span class="ident">toaster</span><span class="punct">.</span><span class="ident">timer</span> <span class="punct">=</span> <span class="number">60</span><br /><span class="ident">toaster</span><span class="punct">.</span><span class="ident">toast!</span></pre>
+
+                <h3>Running</h3>
+                <p>Once you have done your setup and generated the toaster you should have a "toast.db" file in the same directory. This contains all the information surrounding your bread, butter and toasters. To start it checking your conditions simply do this...</p>
+                <pre class="ruby"><span class="ident">require</span> <span class="punct">'</span><span class="string">rubygems</span><span class="punct">'</span><br /><span class="ident">require</span> <span class="punct">'</span><span class="string">toast</span><span class="punct">'</span><br /><br /><span class="keyword">def </span><span class="method">checkToastSite</span><span class="punct">()</span><br />  <span class="comment"># Some logic here to check to see if Toast has been upgraded</span><br />  <span class="punct">...</span><br /><span class="keyword">end</span><br /><br /><span class="constant">Toast</span><span class="punct">::</span><span class="constant">Toaster</span><span class="punct">.</span><span class="ident">run</span></pre>
+                <p>This will run the toasters in the SQLite database and check their conditions. This does mean you can have multiple toast.db's in different directories all running at the same time, theres no reason to put them all in the same one. (but you can do that if you please)</p>
+                <p>An example cron job that runs every minute of every day to run Toaster would be something like this...</p>
+                <pre class="ruby"><span class="normal">* * * * * cd /home/limi/toasters/checkupdate; ruby toaster.rb</span></pre>
+
+                <h3>Source</h3>
+                <p>If you want to have a look through the code that runs all this it can be found over at <a href="http://github.com/lloydpick/toast/">Github</a>, however be warned its very sketchy in some areas, and there are definately dragons to be careful of. This was written pretty much in the space of a single evening, if people want to help and contribute please feel free.</p>
+
+                <h3>Disclaimer</h3>
+                <p>I am not responsible for anything this Gem might do, use it at your own risk, if you tell it to send a twitter message for when its finished wiping your server because you told it to then thats your own damn fault (although I could see it being very amusing none the less).</p>
+
+                <h3>Licence</h3>
+                <p>Use this gem to do whatever you want, modify and adjust the code as you see fit. All I ask is that if you do use this gem in a commercial/business environment then you get in contact with me just to say hello as a courtesy call, and so I can see what cool hip businesses are using this gem.</p>
+            </div>
+            <div id="footer">&copy; 2009 <a href="http://github.com/lloydpick/">Lloyd Pick</a></div>
+        </div>
+    </body>
+</html>
