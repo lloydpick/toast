@@ -179,6 +179,33 @@ module Toast
       end
     end
 
+    def self.check
+      db = SQLite3::Database.new("toast.db")
+
+      db.results_as_hash = true
+      puts "Listing Toasters in toast.db...\n"
+      puts "------------------------------------------------------------"
+      db.execute("select * from toasters group by complete") do |toaster|
+        puts "\tID:\t\t" + toaster["id"]
+        puts "\tFrequency:\t" + toaster["frequency"]
+        puts "\tLast check:\t" + toaster["last_check"]
+        puts "\tNext check:\t" + (Time.parse(toaster["last_check"]) + toaster["frequency"].to_i).to_s
+        puts "\tTime now:\t" + Time.now.to_s
+        puts "\tOverdue?\t" + if ((Time.parse(toaster["last_check"]) + toaster["frequency"].to_i) < Time.now) then "Yes" else "No" end
+        puts "\tComplete?\t" + if (toaster["complete"].to_i == 1) then "Yes" else "No" end
+        puts "\n\tConditions...\n"
+        toaster["conditions"].split(",").each do |pre_condition|
+          db.execute("select * from butters where id = #{pre_condition}") do |condition|
+            puts "\n\tID:\t\t" + condition["id"]
+            puts "\tName:\t\t" + condition["name"]
+            puts "\tFunction:\t" + condition["function"]
+            puts "\tOutcome:\t" + condition["outcome"]
+          end
+        end
+        puts "------------------------------------------------------------\n"
+      end
+    end
+
   end
   
 end
